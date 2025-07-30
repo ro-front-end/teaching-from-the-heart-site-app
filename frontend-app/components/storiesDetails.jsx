@@ -43,8 +43,6 @@ function StoriesDetails() {
           </h2>
 
           <div className="bg-white bg-opacity-90 flex flex-col gap-8 text-gray-800 rounded-xl shadow-lg p-6 mb-8">
-            <p className="leading-relaxed mb-4">{story.contentOne}</p>
-
             {story.imageTwo && (
               <img
                 className="w-full max-w-2xl mx-auto h-64 object-cover rounded-xl mb-4"
@@ -52,17 +50,17 @@ function StoriesDetails() {
                 alt={`${story.title} - Image 2`}
               />
             )}
-
-            {story.contentTwo && (
-              <p className="leading-relaxed">{story.contentTwo}</p>
-            )}
+            <p className="leading-relaxed mb-4">{story.contentOne}</p>
 
             {story.imageThree && (
               <img
-                className="w-full max-w-2xl mx-auto h-64 object-cover rounded-xl mt-4"
+                className="w-full max-w-2xl mx-auto h-64 object-cover rounded-xl"
                 src={story.imageThree}
                 alt={`${story.title} - Image 3`}
               />
+            )}
+            {story.contentTwo && (
+              <p className="leading-relaxed">{story.contentTwo}</p>
             )}
           </div>
         </div>

@@ -1,8 +1,10 @@
+// src/components/SigninForm.jsx
+
 import { Link, useNavigate } from "react-router-dom";
 import { useSigninUserMutation } from "../services/authServices";
 import {
-  initialValues,
   signinSchemaValidation,
+  initialValues,
 } from "../validations/signinValidation.form";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
@@ -22,16 +24,16 @@ function SigninForm() {
   const dispatch = useDispatch();
 
   const formik = useFormik({
-    initialValues: initialValues,
+    initialValues,
     validationSchema: signinSchemaValidation,
     onSubmit: async (values, { resetForm }) => {
       try {
         const userData = await signinUser(values).unwrap();
-        resetForm();
         dispatch(setCredentials(userData));
+        resetForm();
         navigate("/dashboard");
-      } catch (error) {
-        if (error.status === 401) {
+      } catch (err) {
+        if (err.status === 401) {
           alert(
             "This is a private tool. Only administrators can authorize new users with a valid master key. However, you can still explore and read the stories without creating an account."
           );
@@ -44,11 +46,18 @@ function SigninForm() {
 
   return (
     <form
-      className="flex justify-center flex-col p-8 gap-8 bg-white w-[30%] mx-auto mt-12 rounded-lg"
       onSubmit={formik.handleSubmit}
+      className="bg-white p-6 sm:p-8 rounded-xl shadow-lg max-w-md w-full mx-auto flex flex-col gap-6"
     >
-      <h2>Signin</h2>
+      {/* Título */}
+      <h2 className="text-2xl font-bold text-rose-600 text-center mb-2">
+        Create Account
+      </h2>
+      <p className="text-gray-500 text-sm text-center mb-6">
+        Fill in your details to join the platform.
+      </p>
 
+      {/* Campos */}
       {fields.map((field) => (
         <div key={field} className="flex flex-col gap-2">
           <input
@@ -62,27 +71,39 @@ function SigninForm() {
             value={formik.values[field]}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="bg-emerald-100 p-4 rounded-xl focus:rounded-full outline-emerald-300"
+            className="w-full p-4 bg-emerald-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
           />
-          {formik.errors[field] && formik.touched[field] && (
-            <p className="text-red-600">{formik.errors[field]}</p>
+          {formik.touched[field] && formik.errors[field] && (
+            <p className="text-red-600 text-sm">{formik.errors[field]}</p>
           )}
         </div>
       ))}
 
+      {/* Botón de envío */}
       <button
-        disabled={isLoading}
         type="submit"
-        className="bg-rose-500 p-4 px-6 rounded-xl w-full mx-auto text-rose-50 font-semibold hover:bg-rose-600 transition duration-300 ease-in-out cursor-pointer"
+        disabled={isLoading}
+        className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-rose-400 disabled:cursor-not-allowed text-white font-medium py-3 rounded-xl transition duration-200"
       >
-        {isLoading ? "Signinng in..." : "Signin"}
+        {isLoading ? "Signing in..." : "Sign Up"}
       </button>
-      {error?.data.message && (
-        <p className="text-red-800">Something went wrong. Please try again.</p>
+
+      {/* Mensaje de error general */}
+      {error?.data?.message && (
+        <p className="text-red-800 text-sm text-center">
+          Something went wrong. Please try again.
+        </p>
       )}
-      <Link className="text-end text-rose-400 hover:text-rose-500" to="/login">
-        Already have an account?
-      </Link>
+
+      {/* Enlace a login */}
+      <div className="text-center mt-4">
+        <Link
+          to="/login"
+          className="text-rose-500 hover:text-rose-600 text-sm transition"
+        >
+          Already have an account? Log in
+        </Link>
+      </div>
     </form>
   );
 }

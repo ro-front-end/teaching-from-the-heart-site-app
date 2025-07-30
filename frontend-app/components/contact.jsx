@@ -4,7 +4,7 @@ export default function ContactPage() {
   return (
     <div
       id="contact"
-      className="px-4 flex flex-col gap-8 items-center text-center md:gap-12 lg:gap-16 xl:gap-8"
+      className="px-4 flex flex-col gap-8 items-center  text-center md:gap-12 lg:gap-16 xl:gap-8"
     >
       <h1
         className="font-semibold bg-gradient-to-r from-rose-500 to-rose-400 bg-clip-text text-transparent drop-shadow-xl text-4xl uppercase 
@@ -17,7 +17,7 @@ export default function ContactPage() {
         Inspirando en cada clase
       </h2>
 
-      <section className="mt-4 w-full max-w-4xl">
+      <section className="mt-4 w-full max-w-4xl min-h-screen">
         <p className="text-base md:text-lg lg:text-xl px-4 md:px-10 xl:px-20">
           Soy <span className="italic font-semibold">Atala Ortiz</span>, maestra
           con más de 10 años de experiencia en educación. Mi enfoque está en

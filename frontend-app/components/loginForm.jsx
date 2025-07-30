@@ -1,17 +1,18 @@
+// src/components/LoginForm.jsx
+
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "../services/authServices";
 import {
-  initialValues,
   loginSchemaValidation,
+  initialValues,
 } from "../validations/loginValidations.form";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../slices/authSlice";
 
 const fields = ["identifier", "password"];
-
 const placeHolders = {
-  identifier: "User name or email...",
+  identifier: "Username or email...",
   password: "Password...",
 };
 
@@ -21,12 +22,11 @@ function LoginForm() {
   const dispatch = useDispatch();
 
   const formik = useFormik({
-    initialValues: initialValues,
+    initialValues,
     validationSchema: loginSchemaValidation,
     onSubmit: async (values, { resetForm }) => {
       try {
         const userData = await loginUser(values).unwrap();
-        console.log(userData);
         dispatch(
           setCredentials({
             token: userData.token,
@@ -36,7 +36,6 @@ function LoginForm() {
             },
           })
         );
-
         resetForm();
         navigate("/dashboard");
       } catch (err) {
@@ -47,40 +46,60 @@ function LoginForm() {
 
   return (
     <form
-      className="flex justify-center flex-col p-8 gap-8 bg-white w-[80%] sm:w-[50%] md:w-[30%] mx-auto mt-12 rounded-lg"
       onSubmit={formik.handleSubmit}
+      className="bg-white p-6 sm:p-8 rounded-xl shadow-lg max-w-md w-full mx-auto flex flex-col gap-6"
     >
-      <h2>Login</h2>
+      {/* Título */}
+      <h2 className="text-2xl font-bold text-rose-600 text-center mb-2">
+        Log In
+      </h2>
+      <p className="text-gray-500 text-sm text-center mb-6">
+        Welcome back! Please enter your credentials.
+      </p>
 
+      {/* Campos */}
       {fields.map((field) => (
         <div key={field} className="flex flex-col gap-2">
           <input
-            type={field === "password" ? "password" : "text"}
             name={field}
+            type={field === "password" ? "password" : "text"}
+            placeholder={placeHolders[field]}
             value={formik.values[field]}
             onChange={formik.handleChange}
-            placeholder={placeHolders[field]}
-            className="bg-emerald-100 p-4 rounded-xl focus:rounded-full outline-emerald-300"
+            onBlur={formik.handleBlur}
+            className="w-full p-4 bg-emerald-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
           />
-          {formik.errors[field] && formik.touched[field] && (
-            <p className="text-red-600">{formik.errors[field]}</p>
+          {formik.touched[field] && formik.errors[field] && (
+            <p className="text-red-600 text-sm">{formik.errors[field]}</p>
           )}
         </div>
       ))}
 
+      {/* Botón de envío */}
       <button
-        disabled={isLoading}
         type="submit"
-        className="bg-rose-500 p-4 px-6 rounded-xl w-full mx-auto text-rose-50 font-semibold hover:bg-rose-600 transition duration-300 ease-in-out cursor-pointer"
+        disabled={isLoading}
+        className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-rose-400 disabled:cursor-not-allowed text-white font-medium py-3 rounded-xl transition duration-200"
       >
-        {isLoading ? "Logging in..." : "login"}
+        {isLoading ? "Logging in..." : "Log In"}
       </button>
-      {error?.data.message && (
-        <p className="text-red-800">Something went wrong. Please try again.</p>
+
+      {/* Mensaje de error general */}
+      {error?.data?.message && (
+        <p className="text-red-800 text-sm text-center">
+          Invalid credentials. Please try again.
+        </p>
       )}
-      <Link className="text-end text-rose-400 hover:text-rose-500" to="/signin">
-        Don&apos;t have an account?
-      </Link>
+
+      {/* Enlace a registro */}
+      <div className="text-center mt-4">
+        <Link
+          to="/signin"
+          className="text-rose-500 hover:text-rose-600 text-sm transition"
+        >
+          Don&apos;t have an account? Sign up
+        </Link>
+      </div>
     </form>
   );
 }

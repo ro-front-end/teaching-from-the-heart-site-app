@@ -1,4 +1,5 @@
-import { useCreateStoryMutation } from "../services/stories";
+// CreateStoryform.jsx
+
 import { useFormik } from "formik";
 import {
   createStorySchema,
@@ -6,12 +7,12 @@ import {
 } from "../validations/createStory.form";
 import { useState } from "react";
 import { uploadImage } from "../utils/uploadImages";
+import { useCreateStoryMutation } from "../services/stories";
 import { useNavigate } from "react-router-dom";
 
 function CreateStoryform({ onChangeView }) {
   const [step, setStep] = useState(1);
   const [createStory, { isLoading, error }] = useCreateStoryMutation();
-
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -46,19 +47,12 @@ function CreateStoryform({ onChangeView }) {
         navigate("/dashboard");
       } catch (err) {
         console.error("Error creating story", err);
-
-        if (err.data) {
-          console.error("Backend error details:", err.data);
-        } else if (err.error) {
-          console.error("Backend error details:", err.error);
-        }
       }
     },
   });
 
-  async function nextStep() {
+  const nextStep = async () => {
     const touchedFields = {};
-
     if (step === 1) {
       touchedFields.title = true;
       touchedFields.imageOne = true;
@@ -73,182 +67,192 @@ function CreateStoryform({ onChangeView }) {
     formik.setTouched(touchedFields, true);
     const errors = await formik.validateForm();
 
-    // Solo avanzar si no hay errores de los campos de este paso
     const currentStepFields = Object.keys(touchedFields);
     const hasErrors = currentStepFields.some((field) => errors[field]);
 
     if (!hasErrors && step < 3) {
       setStep((s) => s + 1);
     }
-  }
+  };
 
-  function prevStep() {
-    if (step > 1) {
-      setStep((s) => s - 1);
-    }
-  }
+  const prevStep = () => {
+    if (step > 1) setStep((s) => s - 1);
+  };
 
   return (
     <form
-      className="bg-white rounded-xl p-12 flex flex-col items-start gap-8 text-xl"
       onSubmit={formik.handleSubmit}
+      className="bg-white rounded-xl p-6 sm:p-8 md:p-10 max-w-3xl w-full mx-auto flex flex-col gap-6 shadow-lg"
     >
-      <h3 className="text-rose-500 uppercase font-bold">
-        Create a story step {step}
+      {/* Título del paso */}
+      <h3 className="text-rose-500 uppercase font-bold text-2xl text-center mb-4">
+        Create a story - Step {step}
       </h3>
-      <div className="flex flex-col gap-8">
+
+      {/* Contenido por paso */}
+      <div className="flex flex-col gap-6 w-full">
         {step === 1 && (
           <>
+            {/* Título */}
             <div className="flex flex-col gap-2">
               <input
-                className="bg-emerald-50 p-4 rounded-xl focus:rounded-full outline-emerald-200"
                 type="text"
                 name="title"
                 value={formik.values.title}
                 onChange={formik.handleChange}
-                placeholder="title..."
+                placeholder="Title..."
+                className="w-full p-4 bg-emerald-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
               />
               {formik.touched.title && formik.errors.title && (
-                <div className="text-red-600 ">{formik.errors.title} </div>
+                <p className="text-red-600 text-sm">{formik.errors.title}</p>
               )}
             </div>
 
+            {/* Imagen 1 */}
             <div className="flex flex-col gap-2">
               <input
-                className="bg-emerald-50 p-4 rounded-xl focus:rounded-full outline-emerald-200"
                 type="file"
-                name="imageOne"
                 accept="image/*"
                 onChange={(e) =>
                   formik.setFieldValue("imageOne", e.currentTarget.files[0])
                 }
-                placeholder="Title image..."
+                className="w-full p-4 bg-emerald-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
               />
               {formik.touched.imageOne && formik.errors.imageOne && (
-                <div className="text-red-600 ">{formik.errors.imageOne} </div>
+                <p className="text-red-600 text-sm">{formik.errors.imageOne}</p>
               )}
             </div>
 
+            {/* Botones */}
             <button
-              onClick={nextStep}
-              className="bg-rose-500 p-4 text-rose-50 rounded-xl active:bg-rose-500 hover:bg-rose-600 transition duration-300 ease-in-out cursor-pointer"
               type="button"
+              onClick={nextStep}
+              className="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium p-4 rounded-xl transition"
             >
-              Next step
+              Next Step
             </button>
             <button
-              onClick={() => onChangeView(0)}
-              className="bg-neutral-300 p-4 text-rose-50 rounded-xl active:bg-neutral-500 hover:bg-neutral-400 transition duration-300 ease-in-out cursor-pointer"
               type="button"
+              onClick={() => onChangeView(0)}
+              className="w-full bg-neutral-300 hover:bg-neutral-400 text-gray-800 font-medium p-4 rounded-xl transition"
             >
-              cancel
+              Cancel
             </button>
           </>
         )}
 
         {step === 2 && (
           <>
+            {/* Contenido 1 */}
             <div className="flex flex-col gap-2">
               <textarea
-                className="bg-emerald-50 p-4 rounded-xl outline-emerald-200"
-                type="text"
                 name="contentOne"
                 value={formik.values.contentOne}
                 onChange={formik.handleChange}
-                placeholder="Content one"
-                rows="8"
-                cols="38"
+                placeholder="Content part one..."
+                rows="6"
+                className="w-full p-4 bg-emerald-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 resize-none"
               />
               {formik.touched.contentOne && formik.errors.contentOne && (
-                <div className="text-red-600 ">{formik.errors.contentOne} </div>
+                <p className="text-red-600 text-sm">
+                  {formik.errors.contentOne}
+                </p>
               )}
             </div>
 
+            {/* Imagen 2 */}
             <div className="flex flex-col gap-2">
               <input
-                className="bg-emerald-50 p-4 rounded-xl focus:rounded-full outline-emerald-200"
                 type="file"
-                name="imageTwo"
                 accept="image/*"
                 onChange={(e) =>
                   formik.setFieldValue("imageTwo", e.currentTarget.files[0])
                 }
-                placeholder="Title image..."
+                className="w-full p-4 bg-emerald-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
               />
-
               {formik.touched.imageTwo && formik.errors.imageTwo && (
-                <div className="text-red-600 ">{formik.errors.imageTwo} </div>
+                <p className="text-red-600 text-sm">{formik.errors.imageTwo}</p>
               )}
             </div>
+
+            {/* Botones */}
             <button
-              onClick={nextStep}
-              className="bg-rose-500 p-4 text-rose-50 rounded-xl active:bg-rose-500 hover:bg-rose-600 transition duration-300 ease-in-out cursor-pointer"
               type="button"
+              onClick={nextStep}
+              className="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium p-4 rounded-xl transition"
             >
-              Next step
+              Next Step
             </button>
             <button
-              onClick={prevStep}
-              className="bg-emerald-500 p-4 text-emerald-50 rounded-xl active:bg-emerald-500 hover:bg-emerald-600 transition duration-300 ease-in-out cursor-pointer"
               type="button"
+              onClick={prevStep}
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium p-4 rounded-xl transition"
             >
-              Previous step
+              Previous Step
             </button>
           </>
         )}
 
         {step === 3 && (
           <>
+            {/* Contenido 2 */}
             <div className="flex flex-col gap-2">
               <textarea
-                className="bg-emerald-50 p-4 rounded-xl  outline-emerald-200"
-                type="text"
                 name="contentTwo"
                 value={formik.values.contentTwo}
                 onChange={formik.handleChange}
-                placeholder="Content second part..."
-                rows="8"
-                cols="38"
+                placeholder="Content part two..."
+                rows="6"
+                className="w-full p-4 bg-emerald-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 resize-none"
               />
               {formik.touched.contentTwo && formik.errors.contentTwo && (
-                <div className="text-red-600 ">{formik.errors.contentTwo} </div>
+                <p className="text-red-600 text-sm">
+                  {formik.errors.contentTwo}
+                </p>
               )}
             </div>
 
-            <div className="flex flex-col gap-2 w-full mx-auto">
+            {/* Imagen 3 */}
+            <div className="flex flex-col gap-2">
               <input
-                className="bg-emerald-50 p-4 rounded-xl focus:rounded-full outline-emerald-200"
                 type="file"
-                name="imageThree"
                 accept="image/*"
                 onChange={(e) =>
                   formik.setFieldValue("imageThree", e.currentTarget.files[0])
                 }
-                placeholder="Title image..."
+                className="w-full p-4 bg-emerald-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
               />
               {formik.touched.imageThree && formik.errors.imageThree && (
-                <div className="text-red-600 ">{formik.errors.imageThree} </div>
+                <p className="text-red-600 text-sm">
+                  {formik.errors.imageThree}
+                </p>
               )}
             </div>
+
+            {/* Botones */}
             <button
-              className="bg-rose-500 p-4 text-rose-50 rounded-xl active:bg-rose-500 hover:bg-rose-600 transition duration-300 ease-in-out cursor-pointer"
               type="submit"
               disabled={isLoading}
+              className="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium p-4 rounded-xl transition disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Creating story..." : "Create story"}{" "}
+              {isLoading ? "Creating..." : "Create Story"}
             </button>
             <button
-              onClick={prevStep}
-              className="bg-emerald-500 p-4 text-emerald-50 rounded-xl active:bg-emerald-500 hover:bg-emerald-600 transition duration-300 ease-in-out cursor-pointer"
               type="button"
+              onClick={prevStep}
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium p-4 rounded-xl transition"
             >
-              Previous step
+              Previous Step
             </button>
           </>
         )}
       </div>
+
+      {/* Mensaje de error general */}
       {error && (
-        <p className="text-red-800">Error creating Story, please try again</p>
+        <p className="text-red-800 text-center mt-4">
+          Error creating story. Please try again.
+        </p>
       )}
     </form>
   );

@@ -4,7 +4,7 @@ import useAuthHook from "../../utils/authHook";
 import { FaUser } from "react-icons/fa";
 
 function NavBar() {
-  const { isLoggedIn } = useAuthHook();
+  const { user, isLoggedIn } = useAuthHook();
 
   return (
     <nav className="p-4 flex justify-between items-end border-b-2 border-emerald-200/40">
@@ -18,7 +18,7 @@ function NavBar() {
         />
       </Link>
       <div className="flex items-baseline-last gap-4">
-        {!isLoggedIn ? (
+        {!user ? (
           <Link
             className="bg-rose-400 py-1 px-4 rounded-lg text-rose-50 font-semibold hover:bg-rose-500 transition duration-300 ease-in-out"
             to="/login"
