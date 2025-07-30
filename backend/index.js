@@ -9,8 +9,19 @@ const authRoutes = require("./controllers/authRoutes.js");
 const app = express();
 
 // middleware
-app.use(cors());
 app.use(express.json());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://teaching-from-the-heart.vercel.app",
+      "https://teaching-from-the-heart-app.vercel.app",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // routes
 app.use("/api/auth", authRoutes);
