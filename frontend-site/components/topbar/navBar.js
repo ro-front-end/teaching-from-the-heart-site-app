@@ -5,7 +5,7 @@ import { FaUser } from "react-icons/fa";
 
 function NavBar() {
   return (
-    <nav className="flex items-center justify-between">
+    <nav className="flex items-center justify-between w-full mx-auto">
       <Link href="/#hero">
         <Image
           className="opacity-70"

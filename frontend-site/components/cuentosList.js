@@ -9,19 +9,6 @@ import { useGetStoriesQuery } from "@/services/storiesApi";
 function CuentosList() {
   const { data: cuentos = [], isLoading, error } = useGetStoriesQuery();
 
-  const [scope, animate] = useAnimate();
-  const isInView = useInView(scope, { once: true, margin: "-100px" });
-
-  useEffect(() => {
-    if (isInView) {
-      animate(
-        "li",
-        { opacity: 1, y: 0 },
-        { duration: 0.5, delay: stagger(0.1), ease: "easeOut" }
-      );
-    }
-  }, [isInView, animate]);
-
   if (isLoading)
     return (
       <p className="text-center text-gray-500 text-lg py-10">
@@ -36,19 +23,15 @@ function CuentosList() {
     );
 
   return (
-    <ul
-      ref={scope}
-      className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-20 px-4"
-    >
+    <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-20 px-4">
       {cuentos.length === 0 ? (
         <li className="col-span-full text-center text-gray-500 py-8">
           No hay cuentos disponibles por el momento.
         </li>
       ) : (
         cuentos.map((cuento) => (
-          <motion.li
+          <div
             key={cuento.id}
-            initial={{ opacity: 0, y: 20 }}
             className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col group"
           >
             <div className="relative h-52 w-full">
@@ -88,7 +71,7 @@ function CuentosList() {
                 </span>
               </Link>
             </div>
-          </motion.li>
+          </div>
         ))
       )}
     </ul>
