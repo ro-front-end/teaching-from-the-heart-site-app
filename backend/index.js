@@ -4,7 +4,6 @@ const { PORT, MONGODB } = require("./utils/config");
 const mongoose = require("mongoose");
 const storyRoutes = require("./controllers/storyRoutes");
 const authRoutes = require("./controllers/authRoutes.js");
-const pingRouter = require("./controllers/pingRoutes.js");
 
 // connecting to express
 const app = express();
@@ -26,7 +25,6 @@ app.use(
 
 // routes
 app.use("/api/auth", authRoutes);
-app.use("/api/ping", pingRouter);
 app.use("/api/stories", storyRoutes);
 
 // connecting to the DB
