@@ -44,10 +44,10 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" href="/logo-teach.png" />
       </head>
       <body
-        className={`${patrick.className} tracking-wide antialiased  scroll-smooth `}
+        className={`${patrick.className} tracking-wide antialiased  scroll-smoothrelative`}
       >
         <ReduxProvider>
-          <div className="sticky top-0 right-0 z-50 bg-neutral-100/30 shadow-md p-4 backdrop-blur-md">
+          <div className="fixed w-full top-0 right-0 z-50 bg-neutral-100/30 shadow-md p-4 backdrop-blur-md">
             {" "}
             <NavBar />
           </div>
